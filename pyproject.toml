@@ -12,3 +12,5 @@ version = {attr = "slidie_ttyd.__version__"}
 
 [project.scripts]
 slidie-ttyd = "slidie_ttyd.server:main"
+slidie-ttyd-run = "slidie_ttyd.runner:main_run"
+slidie-ttyd-shell = "slidie_ttyd.runner:main_shell"
