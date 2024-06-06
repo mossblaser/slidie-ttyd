@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slidie-ttyd"
+dependencies = []
+dynamic = ["version"]
+
+[tool.setuptools.dynamic]
+version = {attr = "slidie_ttyd.__version__"}
+
+[project.scripts]
+slidie-ttyd = "slidie_ttyd.server:main"
