@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "slidie-ttyd"
-dependencies = []
+dependencies = ["aiohttp"]
 dynamic = ["version"]
 
 [tool.setuptools.dynamic]
