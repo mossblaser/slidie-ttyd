@@ -89,13 +89,7 @@ def run_script(args: Namespace, script: str) -> None:
     sys.exit(subprocess.run(command).returncode)
 
 
-def main_run() -> None:
-    parser = ArgumentParser(
-        description="""
-            For internal use by slidie-ttyd. Run a command.
-        """
-    )
-
+def add_run_args(parser: ArgumentParser) -> None:
     add_common_args(parser)
 
     cmd_group = parser.add_mutually_exclusive_group(required=True)
@@ -118,8 +112,8 @@ def main_run() -> None:
         """,
     )
 
-    args = parser.parse_args()
 
+def do_run(args: Namespace) -> None:
     run_script(
         args,
         make_run_command(
@@ -130,13 +124,7 @@ def main_run() -> None:
     )
 
 
-def main_shell() -> None:
-    parser = ArgumentParser(
-        description="""
-            For internal use by slidie-ttyd. Start a shell.
-        """
-    )
-
+def add_shell_args(parser: ArgumentParser) -> None:
     parser.add_argument(
         "--history",
         action="append",
@@ -149,8 +137,8 @@ def main_shell() -> None:
 
     add_common_args(parser)
 
-    args = parser.parse_args()
 
+def do_shell(args: Namespace) -> None:
     run_script(
         args,
         make_shell_command(
@@ -159,3 +147,20 @@ def main_shell() -> None:
             env=dict(args.env),
         ),
     )
+
+
+def main() -> None:
+    parser = ArgumentParser(description="For internal use. Run a command or shell.")
+
+    subparsers = parser.add_subparsers(required=True)
+
+    run_parser = subparsers.add_parser("run", help="Run a command.")
+    run_parser.set_defaults(action=do_run)
+    add_run_args(run_parser)
+
+    shell_parser = subparsers.add_parser("shell", help="Start a shell.")
+    shell_parser.set_defaults(action=do_shell)
+    add_shell_args(shell_parser)
+
+    args = parser.parse_args()
+    args.action(args)
