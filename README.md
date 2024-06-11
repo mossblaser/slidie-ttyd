@@ -1,4 +1,4 @@
-`slidie-ttyd`: Embed live terminals in your slidie presentation
+`slidie-ttyd`: Embed live terminals in your Slidie presentation
 ===============================================================
 
 `slidie-ttyd` is a utility which allows you to embed live terminals into your
@@ -10,8 +10,8 @@ Usage overview
 --------------
 
 Run the `slidie-ttyd` command to start a local server listening on
-`http://127.0.0.1:8080`. You can optionally give the name of a slidie XHTML
-presentation to server at `/`:
+`http://127.0.0.1:8080`. You can optionally give the name of a Slidie XHTML
+presentation to serve at `/`:
 
     $ slidie-ttyd path/to/presentation.xhtml
 
@@ -20,9 +20,10 @@ means you can use short relative URLs below.*
 
 To create a terminal, create an [iframe magic
 text](https://mossblaser.github.io/slidie/iframe.html) with the URL `/shell`
-(to start a shell) or `/run` to run a predefined command. Query options are
-used to specify what to run as illustrated by the following example (source on
-the left, result on the right):
+(to start a shell) or `/run` to run a predefined command. [Query
+options](https://mossblaser.github.io/slidie/iframe.html#appending-url-query-parameters)
+are used to specify what to run as illustrated by the following example (source
+on the left, result on the right):
 
 ![Example terminal running htop](./docs/example.png)
 
@@ -43,7 +44,7 @@ The following sections enumerate all of the query parameters which can be used
 to control the terminals and what runs in them. The API has been designed with
 [Slidie's URL query parameter appending
 syntax](https://mossblaser.github.io/slidie/iframe.html#appending-url-query-parameters)
-in mind.
+in mind. This takes care of all necessary URL encoding faffery.
 
 
 ### Running commands (`/run`)
@@ -73,8 +74,8 @@ as a series of `argv` parameters, one per argument:
 The system's default shell is started by the `/shell` endpoint. (Setting the
 `SHELL` environment variable overrides this).
 
-You can pre-populate the shell's command history by adding `history` query
-parameters, one per history entry. This can be useful if you want to prepare
+You can pre-populate the shell's command history using the `history` query
+parameter, one per history entry. This can be useful if you want to prepare
 commands to run during a demo, for example:
 
     @@@
@@ -87,8 +88,12 @@ commands to run during a demo, for example:
         "git add foo.txt",
     ]
 
+*Hint: Pressing 'up' in the above shell will show `git add foo.txt`.*
+
 This feature works by creating a history file with the specified lines in it
-and setting the `HISTFILE` environment variable when launching the shell.
+and setting the `HISTFILE` environment variable when launching the shell. As a
+result, this only works for shells which support the `HISTFILE` environment
+variable.
 
 
 ### Setting working directory and environment
@@ -116,7 +121,7 @@ variables respectively:
 
 ### Running on a remote host
 
-You can start a shell or run a command on a remote machine SSH instead by
+You can start a shell or run a command on a remote machine via SSH instead by
 adding the `ssh` query parameter:
 
     @@@
@@ -125,7 +130,7 @@ adding the `ssh` query parameter:
     
     query.ssh = "user@example.com"
 
-Repeat the `ssh` parameter if you need to add additional `ssh` command
+Repeat the `ssh` parameter if you need to add additional `ssh` command line
 arguments.
 
 Note: `slidie-ttyd` takes care of all the somewhat awkward escaping normally
@@ -133,7 +138,7 @@ necessary when starting a remote command using SSH. All other features will
 work as normal.
 
 
-### Controling terminal appearance
+### Controlling terminal appearance
 
 You can set the default terminal font and text size using the
 `--font-name`/`-F` and `--font-size`/`-f` parameters to the `slidie-ttyd`
@@ -156,17 +161,19 @@ the `font_name` and `font_size` query parameters respectively:
 ### Built-in web server
 
 If a Slidie presentation filename is provided as an argument to `slidie-ttyd`,
-it will be served at `/`. If none is specified, any `out.xhtml` in the current
-directory will be served.
+it will be served at `/`. If none is specified, `out.xhtml` in the current
+working directory will be served.
 
-Other files in the same directory will also be served via their filenames
+Other files in the same directory tree will also be served via their filenames
 (except files in the top directory named `run` and `shell`, of course).
 
 Security rules in some browsers prevent keyboard/mouse input to `<iframes>` in
 some situations when served from `file://` URLs. As a result, hosting your
 slides on a web server may be necessary. Further, using server built into
 `slidie-ttyd` has the added benefit of permitting the use of relative URLs (as
-shown in all of the examples).
+shown in all of the examples). It is not necessary, however, to use this web
+server. `slidie-ttyd` may be used entirely for its `/run` and `/shell`
+endpoints.
 
 
 Implementation details
@@ -176,7 +183,7 @@ Implementation details
 [ttyd](https://github.com/tsl0922/ttyd) which is easily driven using Slidie's
 [iframe query parameter
 syntax](https://mossblaser.github.io/slidie/iframe.html#appending-url-query-parameters).
-After parsing the query parameters, `slidie-ttyd` simply redirects to an
+After parsing the query parameters, `slidie-ttyd` simply redirects to a single,
 auto-started instance of ttyd.
 
 To enable each ttyd connection to run different commands, the
