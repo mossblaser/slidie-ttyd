@@ -1,6 +1,14 @@
 """
-This module contains functions which generate small Python scripts which take
-various actions such as starting shells and running commands.
+This module contains functions which generate small Python scripts for starting
+shells or running arbitrary commands with particular environment variables or
+working directories.
+
+The generated scripts can be ``exec()``\ 'd locally or, more compellingly, sent
+via SSH to a remote Python interpreter to achieve the same results on a remote
+system. (Note that SSH alone does not provide a robust mechanism for
+pre-configuring the remote environment along with extra files). It is this
+latter purpose which motivates the generation of Python scripts rather than
+just having ordinary functions here to do the same work!
 """
 
 import os
